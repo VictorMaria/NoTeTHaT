@@ -1,5 +1,8 @@
 {
     "mongoURI": {
         "required": true
+    },
+    "SECRET": {
+        "required": true
     }
 }
