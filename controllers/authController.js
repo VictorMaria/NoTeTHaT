@@ -15,7 +15,7 @@ class AuthController {
       password,
     } = req.body;
     // Fetch user avatar from gravatar
-    const avatar = gravatar.url(email, {
+    const avatar = gravatar.url(email.toLowerCase(), {
       s: '200',
       r: 'pg',
       d: 'mm',
@@ -24,7 +24,7 @@ class AuthController {
     const user = new User({
       firstName,
       lastName,
-      email,
+      email: email.toLowerCase(),
       password,
       avatar,
     });
@@ -41,7 +41,7 @@ class AuthController {
         avatar: user.avatar,
       };
       const token = newToken(payload);
-      return successResponse(res, 201, 'token', token);
+      return successResponse(res, 201, 'user', { message: 'You have Successfully Signed Up', token });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -50,7 +50,7 @@ class AuthController {
   static async signIn(req, res) {
     const { email, password } = req.body;
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: email.toLowerCase() });
       if (!user) {
         return res.status(401).json({ errors: { message: 'Incorrect Credentials' } });
       }

@@ -1,7 +1,7 @@
 import User from '../models/User';
 
 const checkUser = async (req, res, next) => {
-  const { email } = req.body;
+  const email = (req.body.email).toLowerCase();
   try {
     const doesExist = await User.findOne({ email });
     if (doesExist) {
