@@ -15,6 +15,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(ApiPrefix, routes);
 
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'NoTeTHaT! is jotting everything live' });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => debug(`NoTeTHaT! is jotting everything on Port ${PORT}`));
