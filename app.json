@@ -4,5 +4,14 @@
     },
     "SECRET": {
         "required": true
+    },
+    "clientID": {
+        "required": true
+    },
+    "clientSecret": {
+        "required": true
+    },
+    "frontendURL": {
+        "required": true
     }
 }
