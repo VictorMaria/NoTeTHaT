@@ -24,6 +24,12 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  socialId: {
+    type: String,
+  },
+  registrationMode: {
+    type: String,
+  },
   userType: {
     type: String,
     default: 'user',

@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable no-underscore-dangle */
 import dotenv from 'dotenv';
 import User from '../models/User';
@@ -28,6 +29,7 @@ class AuthController {
       email: email.toLowerCase(),
       password,
       avatar,
+      registrationMode: 'regular',
     });
     user.password = hashPassword(password);
     // Saving new user instance into the db
@@ -77,16 +79,20 @@ class AuthController {
     const userData = req.user._json;
     const firstName = userData.given_name;
     const lastName = userData.family_name;
+    const socialId = userData.sub;
     const { email } = userData;
     const avatar = avatarFetcher(email);
     try {
-      const doesUserExist = await User.findOne({ email });
-      if (!doesUserExist) {
+      const userBySocialId = await User.findOne({ socialId });
+      const userByEmail = await User.findOne({ email });
+      if (!userBySocialId && !userByEmail) {
         const user = new User({
           firstName,
           lastName,
           email,
           avatar,
+          socialId,
+          registrationMode: 'via google',
         });
         await user.save();
         const payload = {
@@ -97,17 +103,21 @@ class AuthController {
           avatar: user.avatar,
         };
         const token = newToken(payload);
-        return res.redirect(`${liveFrontendURL}/signup?token=${token}`);
+        return res.redirect(`${liveFrontendURL}/action=signup&?token=${token}`);
+      } else if (userBySocialId && userByEmail) {
+        const payload = {
+          id: userBySocialId.id,
+          firstName: userBySocialId.firstName,
+          lastName: userBySocialId.lastName,
+          email: userBySocialId.email,
+          avatar: userBySocialId.avatar,
+        };
+        const token = newToken(payload);
+        return res.redirect(`${liveFrontendURL}/?action=signin&token=${token}`);
+      } else if (!userBySocialId && userByEmail) {
+        return res.redirect(`${liveFrontendURL}/signin`);
       }
-      const payload = {
-        id: doesUserExist.id,
-        firstName: doesUserExist.firstName,
-        lastName: doesUserExist.lastName,
-        email: doesUserExist.email,
-        avatar: doesUserExist.avatar,
-      };
-      const token = newToken(payload);
-      return res.redirect(`${liveFrontendURL}/signin?token=${token}`);
+      return 'done';
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
