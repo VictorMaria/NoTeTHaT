@@ -3,8 +3,8 @@ import User from '../models/User';
 const checkUser = async (req, res, next) => {
   const email = (req.body.email).toLowerCase();
   try {
-    const doesExist = await User.findOne({ email });
-    if (doesExist) {
+    const doesUserExist = await User.findOne({ email });
+    if (doesUserExist) {
       return res.status(400).json({ errors: { message: 'User already exists' } });
     }
     return next();

@@ -16,7 +16,6 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
   },
   avatar: {
     type: String,
@@ -24,6 +23,12 @@ const UserSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  socialId: {
+    type: String,
+  },
+  registrationMode: {
+    type: String,
   },
   userType: {
     type: String,
