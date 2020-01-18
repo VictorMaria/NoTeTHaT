@@ -11,6 +11,12 @@ class serverResponse {
     });
   }
 
+  static errorResponse(res, status, error) {
+    return res.status(status).json({
+      errors: error,
+    });
+  }
+
   static serverErrorResponse(err, req, res) {
     return res.status(err.status || 500).json({
       errors: {

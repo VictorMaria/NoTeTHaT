@@ -1,6 +1,12 @@
 import mongoose from 'mongoose';
 
+const { Schema } = mongoose;
+
 const NoteSchema = new mongoose.Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+  },
   title: {
     type: String,
     required: true,
@@ -16,8 +22,19 @@ const NoteSchema = new mongoose.Schema({
     longitude: {
       type: Number,
     },
-    city: String,
-    country: String,
+    street: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+  },
+  idempotencyKey: {
+    type: String,
+    required: true,
   },
   createdAt: {
     type: Date,

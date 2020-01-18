@@ -57,6 +57,9 @@ class AuthController {
       if (!user) {
         return res.status(401).json({ errors: { message: 'Incorrect Credentials' } });
       }
+      if (user.registrationMode !== 'regular') {
+        return res.status(401).json({ errors: { message: 'Authenication failed' } });
+      }
       const result = comparePassword(password, user.password);
       if (!result) {
         return res.status(401).json({ errors: { message: 'Incorrect Credentials' } });
