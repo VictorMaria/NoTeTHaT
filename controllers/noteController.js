@@ -78,6 +78,16 @@ class NoteController {
     }
   }
 
+  static async getAllNotes(req, res) {
+    const userId = req.user.id;
+    try {
+      const checkNotes = await Note.find({ userId });
+      return successResponse(res, 200, 'Notes', checkNotes);
+    } catch (err) {
+      return serverErrorResponse(err, req, res);
+    }
+  }
+
   static async editNote(req, res) {
     const userId = req.user.id;
     const { id } = req.params;
