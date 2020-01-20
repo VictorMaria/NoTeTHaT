@@ -55,6 +55,29 @@ class NoteController {
     }
   }
 
+  static async getNote(req, res) {
+    const userId = req.user.id;
+    const { id } = req.params;
+    try {
+      const checkNote = await Note.findOne({ userId, _id: id });
+      if (!checkNote) {
+        return errorResponse(res, 404, { message: 'Note not found' });
+      }
+      return successResponse(res, 200, 'Note', {
+        message: 'There you go!',
+        id: checkNote.userId,
+        userId: checkNote.userId,
+        title: checkNote.title,
+        body: checkNote.body,
+        geoTag: checkNote.geoTag,
+        createdAt: checkNote.createdAt,
+        updatedAt: checkNote.updatedAt,
+      });
+    } catch (err) {
+      return serverErrorResponse(err, req, res);
+    }
+  }
+
   static async editNote(req, res) {
     const userId = req.user.id;
     const { id } = req.params;
