@@ -30,6 +30,11 @@ const validate = {
     check('country')
       .optional()
       .trim(),
+    check('idempotencyKey')
+      .optional()
+      .trim()
+      .isUUID()
+      .withMessage('Idempotency key must be a valid UUID'),
     (req, res, next) => {
       const errors = validationResult(req);
       const errorMessage = {};
