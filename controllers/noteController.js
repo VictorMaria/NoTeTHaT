@@ -65,7 +65,7 @@ class NoteController {
       }
       return successResponse(res, 200, 'Note', {
         message: 'There you go!',
-        id: checkNote.userId,
+        id: checkNote.id,
         userId: checkNote.userId,
         title: checkNote.title,
         body: checkNote.body,
@@ -104,7 +104,7 @@ class NoteController {
       );
       return successResponse(res, 200, 'Note', {
         message: 'Changes saved!',
-        id: updateNote.userId,
+        id: updateNote.id,
         userId: updateNote.userId,
         title: updateNote.title,
         body: updateNote.body,
@@ -112,6 +112,21 @@ class NoteController {
         createdAt: updateNote.createdAt,
         updatedAt: updateNote.updatedAt,
       });
+    } catch (err) {
+      return serverErrorResponse(err, req, res);
+    }
+  }
+
+  static async deleteNote(req, res) {
+    const userId = req.user.id;
+    const { id } = req.params;
+    try {
+      const checkNote = await Note.findOne({ userId, _id: id });
+      if (!checkNote) {
+        return errorResponse(res, 404, { message: 'Note not found' });
+      }
+      await Note.deleteOne({ userId, _id: id });
+      return successResponse(res, 200, 'Note', { message: 'Note deleted!' });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
