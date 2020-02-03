@@ -82,7 +82,7 @@ class NoteController {
     const userId = req.user.id;
     try {
       const checkNotes = await Note.find({ userId });
-      return successResponse(res, 200, 'Notes', checkNotes);
+      return successResponse(res, 200, 'Notes', checkNotes, checkNotes);
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -127,6 +127,17 @@ class NoteController {
       }
       await Note.deleteOne({ userId, _id: id });
       return successResponse(res, 200, 'Note', { message: 'Note deleted!' });
+    } catch (err) {
+      return serverErrorResponse(err, req, res);
+    }
+  }
+
+  static async selectAndDeleteNotes(req, res) {
+    const userId = req.user.id;
+    const noteIds = req.body.id;
+    try {
+      await Note.deleteMany({ userId, _id: noteIds });
+      return successResponse(res, 200, 'Note', { message: 'Selected Note(s) deleted!' });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
