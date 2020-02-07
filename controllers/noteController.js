@@ -17,7 +17,7 @@ class NoteController {
     } = req.body;
     const userId = req.user.id;
     try {
-      const doesNoteExist = await Note.findOne({ idempotencyKey });
+      const doesNoteExist = await Note.findOne({ idempotencyKey }, 'userId title body geoTag createdAt');
       if (!doesNoteExist) {
         const takeNote = new Note({
           userId,
@@ -31,7 +31,7 @@ class NoteController {
           idempotencyKey,
         });
         const note = await takeNote.save();
-        return successResponse(res, 201, 'Note', {
+        return successResponse(res, 201, 'note', {
           message: 'Note Added!',
           id: note.id,
           userId: note.userId,
@@ -40,16 +40,10 @@ class NoteController {
           geoTag: note.geoTag,
           createdAt: note.createdAt,
         });
+      } if (req.user.id === (doesNoteExist.userId).toString()) {
+        return successResponse(res, 200, 'note', doesNoteExist);
       }
-      return successResponse(res, 200, 'Note', {
-        message: 'Note Added!',
-        id: doesNoteExist.id,
-        userId: doesNoteExist.userId,
-        title: doesNoteExist.title,
-        body: doesNoteExist.body,
-        geoTag: doesNoteExist.geoTag,
-        createdAt: doesNoteExist.createdAt,
-      });
+      return errorResponse(res, 400, { message: 'IdempotencyKey expired, please generate a new one' });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -59,20 +53,11 @@ class NoteController {
     const userId = req.user.id;
     const { id } = req.params;
     try {
-      const checkNote = await Note.findOne({ userId, _id: id });
+      const checkNote = await Note.findOne({ userId, _id: id }, 'userId title body geoTag createdAt');
       if (!checkNote) {
         return errorResponse(res, 404, { message: 'Note not found' });
       }
-      return successResponse(res, 200, 'Note', {
-        message: 'There you go!',
-        id: checkNote.id,
-        userId: checkNote.userId,
-        title: checkNote.title,
-        body: checkNote.body,
-        geoTag: checkNote.geoTag,
-        createdAt: checkNote.createdAt,
-        updatedAt: checkNote.updatedAt,
-      });
+      return successResponse(res, 200, 'note', checkNote);
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -81,8 +66,8 @@ class NoteController {
   static async getAllNotes(req, res) {
     const userId = req.user.id;
     try {
-      const checkNotes = await Note.find({ userId });
-      return successResponse(res, 200, 'Notes', checkNotes, checkNotes);
+      const checkNotes = await Note.find({ userId }, 'userId title body geoTag createdAt');
+      return successResponse(res, 200, 'notes', checkNotes, checkNotes);
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -102,7 +87,7 @@ class NoteController {
         { $set: { title, body, updatedAt: new Date() } },
         { new: true },
       );
-      return successResponse(res, 200, 'Note', {
+      return successResponse(res, 200, 'note', {
         message: 'Changes saved!',
         id: updateNote.id,
         userId: updateNote.userId,
@@ -126,7 +111,7 @@ class NoteController {
         return errorResponse(res, 404, { message: 'Note not found' });
       }
       await Note.deleteOne({ userId, _id: id });
-      return successResponse(res, 200, 'Note', { message: 'Note deleted!' });
+      return successResponse(res, 200, 'note', { message: 'Note deleted!' });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
@@ -137,7 +122,7 @@ class NoteController {
     const noteIds = req.body.id;
     try {
       await Note.deleteMany({ userId, _id: noteIds });
-      return successResponse(res, 200, 'Note', { message: 'Selected Note(s) deleted!' });
+      return successResponse(res, 200, 'note', { message: 'Selected Note(s) deleted!' });
     } catch (err) {
       return serverErrorResponse(err, req, res);
     }
