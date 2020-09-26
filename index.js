@@ -1,17 +1,23 @@
 /* eslint-disable no-unused-vars */
 import '@babel/polyfill';
 import express from 'express';
+import http from 'http';
 import passport from 'passport';
 import Debug from 'debug';
 import cors from 'cors';
 import connectDb from './config/db';
 import routes from './routes';
 import passportSetup from './helpers/strategies';
+import socketConnection from './helpers/socketIo';
 
 const ApiPrefix = '/api/v1';
 const debug = Debug('dev');
 
 const app = express();
+
+const server = http.createServer(app);
+socketConnection(server);
+
 app.use(passport.initialize());
 connectDb();
 app.use(cors());
@@ -25,4 +31,4 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => debug(`NoTeTHaT! is jotting everything on Port ${PORT}`));
+server.listen(PORT, () => debug(`NoTeTHaT! is jotting everything on Port ${PORT}`));
