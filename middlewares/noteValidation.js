@@ -1,4 +1,4 @@
-import { check, validationResult, param } from 'express-validator';
+import { check, param } from 'express-validator';
 
 const validate = {
   newNote: [
@@ -35,19 +35,6 @@ const validate = {
       .trim()
       .isUUID()
       .withMessage('Idempotency key must be a valid UUID'),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      const errorMessage = {};
-      if (!errors.isEmpty()) {
-        errors.array({ onlyFirstError: true }).forEach((error) => {
-          errorMessage[error.param] = error.msg;
-        });
-        return res.status(400).json({
-          errors: errorMessage,
-        });
-      }
-      return next();
-    },
   ],
   editNote: [
     check('title')
@@ -61,37 +48,11 @@ const validate = {
       .not()
       .isEmpty({ ignore_whitespace: true })
       .withMessage('Note cannot be empty'),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      const errorMessage = {};
-      if (!errors.isEmpty()) {
-        errors.array({ onlyFirstError: true }).forEach((error) => {
-          errorMessage[error.param] = error.msg;
-        });
-        return res.status(400).json({
-          errors: errorMessage,
-        });
-      }
-      return next();
-    },
   ],
   validateId: [
     param('id')
       .matches((/^[0-9a-f]{24}$/))
       .withMessage('id is not valid'),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      const errorMessage = {};
-      if (!errors.isEmpty()) {
-        errors.array({ onlyFirstError: true }).forEach((error) => {
-          errorMessage[error.param] = error.msg;
-        });
-        return res.status(400).json({
-          errors: errorMessage,
-        });
-      }
-      return next();
-    },
   ],
 };
 export default validate;

@@ -43,19 +43,6 @@ const validate = {
         return value;
       })
       .withMessage('Passwords don\'t match'),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      const errorMessage = {};
-      if (!errors.isEmpty()) {
-        errors.array({ onlyFirstError: true }).forEach((error) => {
-          errorMessage[error.param] = error.msg;
-        });
-        return res.status(400).json({
-          errors: errorMessage,
-        });
-      }
-      return next();
-    },
   ],
   signIn: [
     check('email')
@@ -69,19 +56,6 @@ const validate = {
       .not()
       .isEmpty({ ignore_whitespace: true })
       .withMessage('Password is required'),
-    (req, res, next) => {
-      const errors = validationResult(req);
-      const errorMessage = {};
-      if (!errors.isEmpty()) {
-        errors.array({ onlyFirstError: true }).forEach((error) => {
-          errorMessage[error.param] = error.msg;
-        });
-        return res.status(400).json({
-          errors: errorMessage,
-        });
-      }
-      return next();
-    },
   ],
 };
 
