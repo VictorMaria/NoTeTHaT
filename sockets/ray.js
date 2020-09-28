@@ -1,5 +1,5 @@
 import Authentication from '../middlewares/authentication';
-import RayController from '../controllers/RayController';
+import RayController from '../controllers/rayController';
 
 
 const { verifyTokenViaSocket } = Authentication;
