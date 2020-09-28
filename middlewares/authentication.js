@@ -29,6 +29,17 @@ class Authentication {
       return next(err);
     }
   }
+  static async verifyTokenViaSocket(userToken) {
+    if (!userToken) {
+        return 'token error';
+    }
+    try {
+      const decoded = await jwt.verify(userToken, SECRET);
+      return decoded;
+    } catch (err) {
+      return 'token error';
+    }
+  }
 }
 
 export default Authentication;
