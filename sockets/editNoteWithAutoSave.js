@@ -18,7 +18,7 @@ const updateNote = (id, itemToUpdate, itemValue, socket) => {
   }
 };
 
-const editNoteWithAutoSave = (io, socket) => {
+const editNoteWithAutoSave = (socket) => {
   let id;
   socket.on('noteId', (noteId) => {
     id = noteId;

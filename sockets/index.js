@@ -1,6 +1,7 @@
 import socketIo from 'socket.io';
 import Debug from 'debug';
-import editNoteWithAutoSave from '../sockets/editNoteWithAutoSave';
+import editNoteWithAutoSave from './editNoteWithAutoSave';
+import captureRayFromPC from './ray';
 
 const debug = Debug('dev');
 
@@ -10,7 +11,8 @@ const socketConnection = (server) => {
   io.on('connection', (socket) => {
     debug('The NoTeTHat sockets are 5 Alive');
     socket.emit('greetings', { message: 'Welcome to NoTeTHaT' });
-    editNoteWithAutoSave(io, socket);
+    editNoteWithAutoSave(socket);
+    captureRayFromPC(socket);
   });
 };
 
